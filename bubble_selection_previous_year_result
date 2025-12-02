@@ -1,0 +1,89 @@
+#include <iostream>
+using namespace std;
+
+// Bubble Sort Function
+void bubbleSort(int marks[], int n, int roll[]) {
+    cout << "\n--- Bubble Sort Pass by Pass ---\n";
+    for (int i = 0; i < n - 1; i++) {
+        cout << "Pass " << i + 1 << ": ";
+        for (int j = 0; j < n - i - 1; j++) {
+            if (marks[j] < marks[j + 1]) { // Descending order for topper first
+                swap(marks[j], marks[j + 1]);
+                swap(roll[j], roll[j + 1]); // Swap roll numbers accordingly
+            }
+        }
+        // Print array after each pass
+        for (int k = 0; k < n; k++) {
+            cout << marks[k] << " ";
+        }
+        cout << endl;
+    }
+}
+
+// Selection Sort Function
+void selectionSort(int marks[], int n, int roll[]) {
+    cout << "\n--- Selection Sort Pass by Pass ---\n";
+    for (int i = 0; i < n - 1; i++) {
+        int maxIdx = i;
+        for (int j = i + 1; j < n; j++) {
+            if (marks[j] > marks[maxIdx]) {
+                maxIdx = j;
+            }
+        }
+        swap(marks[i], marks[maxIdx]);
+        swap(roll[i], roll[maxIdx]); // Swap roll numbers accordingly
+
+        // Print array after each pass
+        cout << "Pass " << i + 1 << ": ";
+        for (int k = 0; k < n; k++) {
+            cout << marks[k] << " ";
+        }
+        cout << endl;
+    }
+}
+
+int main() {
+    int n;
+    cout << "Enter number of students: ";
+    cin >> n;
+
+    int marks[n];
+    int roll[n]; // Roll numbers
+
+    // Input marks and initialize roll numbers
+    for (int i = 0; i < n; i++) {
+        cout << "Enter marks of student " << i + 1 << ": ";
+        cin >> marks[i];
+        roll[i] = i + 1; // Initial roll numbers
+    }
+
+    // Bubble Sort
+    int marksBubble[n], rollBubble[n];
+    for (int i = 0; i < n; i++) {
+        marksBubble[i] = marks[i];
+        rollBubble[i] = roll[i];
+    }
+    bubbleSort(marksBubble, n, rollBubble);
+
+    // Display final ranks after Bubble Sort
+    cout << "\nFinal Rankings after Bubble Sort:\n";
+    for (int i = 0; i < n; i++) {
+        cout << "Roll No " << rollBubble[i] << ": " << marksBubble[i] << " marks\n";
+    }
+
+    // Selection Sort
+    int marksSelection[n], rollSelection[n];
+    for (int i = 0; i < n; i++) {
+        marksSelection[i] = marks[i];
+        rollSelection[i] = roll[i];
+    }
+    selectionSort(marksSelection, n, rollSelection);
+
+    // Display final ranks after Selection Sort
+    cout << "\nFinal Rankings after Selection Sort:\n";
+    for (int i = 0; i < n; i++) {
+        cout << "Roll No " << rollSelection[i] << ": " << marksSelection[i] << " marks\n";
+    }
+
+    return 0;
+}
