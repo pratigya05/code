@@ -1,0 +1,68 @@
+#include <iostream>
+using namespace std;
+
+#define INF 9999
+
+void dijkstra(int graph[10][10], int n, int start, int end) {
+    int dist[10], visited[10];
+
+    // Initialize distances
+    for (int i = 0; i < n; i++) {
+        dist[i] = INF;
+        visited[i] = 0;
+    }
+
+    dist[start] = 0;
+
+    // Dijkstra main loop
+    for (int count = 0; count < n - 1; count++) {
+        int u = -1;
+        int minDist = INF;
+
+        // Pick the unvisited vertex with the minimum distance
+        for (int i = 0; i < n; i++) {
+            if (!visited[i] && dist[i] < minDist) {
+                minDist = dist[i];
+                u = i;
+            }
+        }
+
+        visited[u] = 1;
+
+        // Update distances of neighbors
+        for (int v = 0; v < n; v++) {
+            if (!visited[v] && graph[u][v] != 0 &&
+                dist[u] + graph[u][v] < dist[v]) {
+                dist[v] = dist[u] + graph[u][v];
+            }
+        }
+    }
+
+    cout << "\nShortest distance from node " << start
+         << " to node " << end << " = " << dist[end] << endl;
+}
+
+int main() {
+    int n, graph[10][10];
+    int start, end;
+
+    cout << "Enter number of nodes: ";
+    cin >> n;
+
+    cout << "\nEnter adjacency matrix (0 for no edge):\n";
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    cout << "\nEnter start node: ";
+    cin >> start;
+
+    cout << "Enter end node: ";
+    cin >> end;
+
+    dijkstra(graph, n, start, end);
+
+    return 0;
+}
