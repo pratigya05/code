@@ -1,0 +1,212 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    string name;
+    Node* next;
+};
+
+class VertexClub {
+public:
+    Node* head;
+
+    VertexClub() {
+        head = NULL;
+    }
+
+    // Add President (Insert at beginning)
+    void addPresident(string name) {
+        Node* newNode = new Node{name, NULL};
+        newNode->next = head;
+        head = newNode;
+        cout << "President added successfully!\n";
+    }
+
+    // Add Secretary (Insert at end)
+    void addSecretary(string name) {
+        Node* newNode = new Node{name, NULL};
+        if (head == NULL) {
+            head = newNode;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next != NULL)
+            temp = temp->next;
+
+        temp->next = newNode;
+        cout << "Secretary added successfully!\n";
+    }
+
+    // Delete President (delete beginning)
+    void deletePresident() {
+        if (head == NULL) {
+            cout << "List is empty!\n";
+            return;
+        }
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+        cout << "President deleted!\n";
+    }
+
+    // Delete Secretary (delete end)
+    void deleteSecretary() {
+        if (head == NULL) {
+            cout << "List empty!\n";
+            return;
+        }
+        if (head->next == NULL) {
+            delete head;
+            head = NULL;
+            cout << "Secretary deleted!\n";
+            return;
+        }
+        Node* temp = head;
+        while (temp->next->next != NULL)
+            temp = temp->next;
+
+        delete temp->next;
+        temp->next = NULL;
+        cout << "Secretary deleted!\n";
+    }
+
+    // Delete by member name
+    void deleteByName(string name) {
+        if (head == NULL) {
+            cout << "List empty!\n";
+            return;
+        }
+
+        if (head->name == name) {
+            deletePresident();
+            return;
+        }
+
+        Node* temp = head;
+        while (temp->next != NULL && temp->next->name != name)
+            temp = temp->next;
+
+        if (temp->next == NULL) {
+            cout << "Member not found!\n";
+            return;
+        }
+
+        Node* del = temp->next;
+        temp->next = temp->next->next;
+        delete del;
+        cout << "Member deleted: " << name << endl;
+    }
+
+    // Count number of members
+    int countMembers() {
+        int count = 0;
+        Node* temp = head;
+        while (temp != NULL) {
+            count++;
+            temp = temp->next;
+        }
+        return count;
+    }
+
+    // Display members
+    void display() {
+        if (head == NULL) {
+            cout << "Club list is empty!\n";
+            return;
+        }
+        cout << "\nVertex Club Members:\n";
+        Node* temp = head;
+        while (temp != NULL) {
+            cout << temp->name << " -> ";
+            temp = temp->next;
+        }
+        cout << "NULL\n";
+    }
+
+    // Concatenate two lists
+    void concatenate(VertexClub &list2) {
+        if (head == NULL) {
+            head = list2.head;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next != NULL)
+            temp = temp->next;
+
+        temp->next = list2.head;
+        cout << "\nLists concatenated successfully!\n";
+    }
+};
+
+int main() {
+    VertexClub divA, divB;
+
+    int choice;
+    string name;
+
+    while (true) {
+        cout << "\n---- VERTEX CLUB MENU ----";
+        cout << "\n1. Add President";
+        cout << "\n2. Add Secretary";
+        cout << "\n3. Delete President";
+        cout << "\n4. Delete Secretary";
+        cout << "\n5. Delete by Name";
+        cout << "\n6. Count Members";
+        cout << "\n7. Display Members";
+        cout << "\n8. Concatenate Div A & Div B";
+        cout << "\n9. Exit";
+        cout << "\nEnter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "Enter President name: ";
+            cin >> name;
+            divA.addPresident(name);
+            break;
+
+        case 2:
+            cout << "Enter Secretary name: ";
+            cin >> name;
+            divA.addSecretary(name);
+            break;
+
+        case 3:
+            divA.deletePresident();
+            break;
+
+        case 4:
+            divA.deleteSecretary();
+            break;
+
+        case 5:
+            cout << "Enter name to delete: ";
+            cin >> name;
+            divA.deleteByName(name);
+            break;
+
+        case 6:
+            cout << "Total Members: " << divA.countMembers() << endl;
+            break;
+
+        case 7:
+            divA.display();
+            break;
+
+        case 8:
+            cout << "Adding members in Div B (2 sample members)…\n";
+            divB.addPresident("DivB_President");
+            divB.addSecretary("DivB_Secretary");
+            divA.concatenate(divB);
+            break;
+
+        case 9:
+            return 0;
+
+        default:
+            cout << "Invalid choice!";
+        }
+    }
+
+    return 0;
+}
