@@ -1,0 +1,151 @@
+#include <iostream>
+using namespace std;
+
+#define MAX 20   // total array size
+
+class TwoQueues {
+private:
+    int arr[MAX];
+    int front1, rear1;
+    int front2, rear2;
+    int size;       // total size
+    int mid;        // dividing index
+
+public:
+    TwoQueues(int n) {
+        size = n;
+        mid = size / 2;  // first half : second half
+
+        // Queue 1 pointers
+        front1 = rear1 = -1;
+
+        // Queue 2 pointers (start from mid)
+        front2 = rear2 = mid - 1;
+    }
+
+    // Add element to Queue 1
+    void enqueue1(int x) {
+        if (rear1 == mid - 1) {
+            cout << "Queue 1 Overflow!\n";
+            return;
+        }
+        if (front1 == -1)
+            front1 = 0;
+
+        arr[++rear1] = x;
+        cout << "Inserted " << x << " in Queue 1\n";
+    }
+
+    // Add element to Queue 2
+    void enqueue2(int x) {
+        if (rear2 == size - 1) {
+            cout << "Queue 2 Overflow!\n";
+            return;
+        }
+        if (front2 == mid - 1)
+            front2 = mid;
+
+        arr[++rear2] = x;
+        cout << "Inserted " << x << " in Queue 2\n";
+    }
+
+    // Delete element from Queue 1
+    void dequeue1() {
+        if (front1 == -1 || front1 > rear1) {
+            cout << "Queue 1 Underflow!\n";
+            return;
+        }
+        cout << "Deleted " << arr[front1++] << " from Queue 1\n";
+    }
+
+    // Delete element from Queue 2
+    void dequeue2() {
+        if (front2 == mid || front2 > rear2) {
+            cout << "Queue 2 Underflow!\n";
+            return;
+        }
+        cout << "Deleted " << arr[front2++] << " from Queue 2\n";
+    }
+
+    // Display Queue 1
+    void display1() {
+        if (front1 == -1 || front1 > rear1) {
+            cout << "Queue 1 is empty.\n";
+            return;
+        }
+        cout << "Queue 1: ";
+        for (int i = front1; i <= rear1; i++)
+            cout << arr[i] << " ";
+        cout << endl;
+    }
+
+    // Display Queue 2
+    void display2() {
+        if (front2 == mid || front2 > rear2) {
+            cout << "Queue 2 is empty.\n";
+            return;
+        }
+        cout << "Queue 2: ";
+        for (int i = front2; i <= rear2; i++)
+            cout << arr[i] << " ";
+        cout << endl;
+    }
+};
+
+int main() {
+    TwoQueues q(20);   // Two queues in an array of size 20
+    int choice, value;
+
+    do {
+        cout << "\n*** MULTIPLE QUEUE MENU ***\n";
+        cout << "1. Add to Queue 1\n";
+        cout << "2. Add to Queue 2\n";
+        cout << "3. Delete from Queue 1\n";
+        cout << "4. Delete from Queue 2\n";
+        cout << "5. Display Queue 1\n";
+        cout << "6. Display Queue 2\n";
+        cout << "7. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "Enter value: ";
+            cin >> value;
+            q.enqueue1(value);
+            break;
+
+        case 2:
+            cout << "Enter value: ";
+            cin >> value;
+            q.enqueue2(value);
+            break;
+
+        case 3:
+            q.dequeue1();
+            break;
+
+        case 4:
+            q.dequeue2();
+            break;
+
+        case 5:
+            q.display1();
+            break;
+
+        case 6:
+            q.display2();
+            break;
+
+        case 7:
+            cout << "Exiting...\n";
+            break;
+
+        default:
+            cout << "Invalid Choice!\n";
+        }
+
+    } while (choice != 7);
+
+    return 0;
+}
