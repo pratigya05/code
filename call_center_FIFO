@@ -1,0 +1,123 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    string customerName;
+    Node* next;
+};
+
+class CallQueue {
+private:
+    Node* front;
+    Node* rear;
+    int count;
+
+public:
+    CallQueue() {
+        front = rear = NULL;
+        count = 0;
+    }
+
+    // Check if queue is empty
+    bool isEmpty() {
+        return front == NULL;
+    }
+
+    // Enqueue a new customer call
+    void enqueue(string name) {
+        Node* newNode = new Node;
+        newNode->customerName = name;
+        newNode->next = NULL;
+
+        if (rear == NULL) { // Queue is empty
+            front = rear = newNode;
+        } else {
+            rear->next = newNode;
+            rear = newNode;
+        }
+        count++;
+        cout << "Call from " << name << " added to queue.\n";
+    }
+
+    // Dequeue a customer call for agent
+    void dequeue() {
+        if (isEmpty()) {
+            cout << "No calls waiting. Agent is idle.\n";
+            return;
+        }
+
+        Node* temp = front;
+        cout << "Assisting customer: " << temp->customerName << endl;
+
+        front = front->next;
+        if (front == NULL)
+            rear = NULL; // Queue became empty
+
+        delete temp;
+        count--;
+    }
+
+    // Display all waiting calls
+    void display() {
+        if (isEmpty()) {
+            cout << "No calls in queue.\n";
+            return;
+        }
+
+        cout << "Calls waiting in queue: ";
+        Node* temp = front;
+        while (temp != NULL) {
+            cout << temp->customerName << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+
+    // Count of waiting calls
+    int size() {
+        return count;
+    }
+};
+
+int main() {
+    CallQueue cq;
+    int choice;
+    string name;
+
+    do {
+        cout << "\n*** CALL CENTRE QUEUE MENU ***\n";
+        cout << "1. New Customer Call (Enqueue)\n";
+        cout << "2. Serve Customer (Dequeue)\n";
+        cout << "3. Display Waiting Calls\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter customer name: ";
+                cin >> name;
+                cq.enqueue(name);
+                break;
+
+            case 2:
+                cq.dequeue();
+                break;
+
+            case 3:
+                cq.display();
+                break;
+
+            case 4:
+                cout << "\nExiting...\n";
+                cout << "Total calls left in queue: " << cq.size() << endl;
+                break;
+
+            default:
+                cout << "Invalid choice!\n";
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}
