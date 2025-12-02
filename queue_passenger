@@ -1,0 +1,112 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    string name;
+    Node* next;
+};
+
+class PassengerQueue {
+private:
+    Node* front;
+    Node* rear;
+    int count;
+
+public:
+    PassengerQueue() {
+        front = rear = NULL;
+        count = 0;
+    }
+
+    // Insert passenger at rear
+    void enqueue(string name) {
+        Node* newNode = new Node;
+        newNode->name = name;
+        newNode->next = NULL;
+
+        if (rear == NULL) {    // Queue is empty
+            front = rear = newNode;
+        } else {
+            rear->next = newNode;
+            rear = newNode;
+        }
+
+        count++;
+        cout << name << " added to the queue." << endl;
+    }
+
+    // Display front passenger
+    void displayFront() {
+        if (front == NULL) {
+            cout << "Queue is empty! No passenger at front.\n";
+        } else {
+            cout << "Passenger at front: " << front->name << endl;
+        }
+    }
+
+    // Remove passenger from front
+    void dequeue() {
+        if (front == NULL) {
+            cout << "Queue is empty! Nothing to remove.\n";
+            return;
+        }
+
+        Node* temp = front;
+        cout << "Removing passenger: " << temp->name << endl;
+
+        front = front->next;
+
+        if (front == NULL)
+            rear = NULL; // Queue becomes empty
+
+        delete temp;
+        count--;
+    }
+
+    // Return number of passengers
+    int size() {
+        return count;
+    }
+};
+
+int main() {
+    PassengerQueue pq;
+    int choice;
+    string name;
+
+    do {
+        cout << "\n*** PASSENGER QUEUE MENU ***\n";
+        cout << "1. Add Passenger (Enqueue)\n";
+        cout << "2. View Front Passenger\n";
+        cout << "3. Remove Front Passenger (Dequeue)\n";
+        cout << "4. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter passenger name: ";
+                cin >> name;
+                pq.enqueue(name);
+                break;
+
+            case 2:
+                pq.displayFront();
+                break;
+
+            case 3:
+                pq.dequeue();
+                break;
+
+            case 4:
+                cout << "\nProgram terminated.\n";
+                cout << "Passengers left in queue: " << pq.size() << endl;
+                break;
+
+            default:
+                cout << "Invalid choice!\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
