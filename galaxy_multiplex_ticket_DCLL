@@ -1,0 +1,162 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int seat;      // Seat number (1–8)
+    bool booked;   // false = available, true = booked
+    Node* next;
+    Node* prev;
+
+    Node(int s) {
+        seat = s;
+        booked = false;
+        next = prev = NULL;
+    }
+};
+
+class Multiplex {
+public:
+    Node* head[8];    // 8 rows
+
+    Multiplex() {
+        // Initialize all rows
+        for (int i = 0; i < 8; i++) {
+            head[i] = createRow();
+        }
+
+        // Randomly mark some seats booked initially
+        head[0]->next->booked = true;  // sample
+        head[2]->next->next->booked = true;
+        head[4]->prev->booked = true;
+    }
+
+    // ---------------- CREATE A ROW ----------------
+    Node* createRow() {
+        Node* first = NULL;
+        Node* last = NULL;
+
+        for (int i = 1; i <= 8; i++) {
+            Node* newNode = new Node(i);
+
+            if (first == NULL) {
+                first = last = newNode;
+            }
+            else {
+                last->next = newNode;
+                newNode->prev = last;
+                last = newNode;
+            }
+        }
+
+        // Make circular
+        last->next = first;
+        first->prev = last;
+
+        return first;
+    }
+
+    // ---------------- DISPLAY SEATS ----------------
+    void display() {
+        cout << "\n******* CURRENT SEAT STATUS (0 = FREE, 1 = BOOKED) *********\n";
+
+        for (int i = 0; i < 8; i++) {
+            cout << "Row " << (i + 1) << ": ";
+
+            Node* temp = head[i];
+            do {
+                cout << temp->seat << "(" << temp->booked << ") ";
+                temp = temp->next;
+            } while (temp != head[i]);
+
+            cout << endl;
+        }
+    }
+
+    // ---------------- BOOKING ----------------
+    void bookSeat(int row, int seatNo) {
+        row--; 
+
+        Node* temp = head[row];
+        do {
+            if (temp->seat == seatNo) {
+                if (temp->booked == false) {
+                    temp->booked = true;
+                    cout << "Seat " << seatNo << " in Row " << row+1 << " booked successfully!\n";
+                }
+                else {
+                    cout << "Seat already booked!\n";
+                }
+                return;
+            }
+            temp = temp->next;
+        } while (temp != head[row]);
+
+        cout << "Invalid seat number!\n";
+    }
+
+    // ---------------- CANCEL BOOKING ----------------
+    void cancelSeat(int row, int seatNo) {
+        row--;
+
+        Node* temp = head[row];
+        do {
+            if (temp->seat == seatNo) {
+                if (temp->booked == true) {
+                    temp->booked = false;
+                    cout << "Seat " << seatNo << " in Row " << row+1 << " cancelled successfully!\n";
+                }
+                else {
+                    cout << "Seat is not booked!\n";
+                }
+                return;
+            }
+            temp = temp->next;
+        } while (temp != head[row]);
+
+        cout << "Invalid seat number!\n";
+    }
+};
+
+int main() {
+    Multiplex m;
+    int choice;
+
+    while (true) {
+        cout << "\n========== GALAXY MULTIPLEX MENU ==========\n";
+        cout << "1. Display Available Seats\n";
+        cout << "2. Book Seat\n";
+        cout << "3. Cancel Seat\n";
+        cout << "4. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            m.display();
+        }
+        else if (choice == 2) {
+            int row, seat;
+            cout << "Enter Row (1-8): ";
+            cin >> row;
+            cout << "Enter Seat (1-8): ";
+            cin >> seat;
+            m.bookSeat(row, seat);
+        }
+        else if (choice == 3) {
+            int row, seat;
+            cout << "Enter Row (1-8): ";
+            cin >> row;
+            cout << "Enter Seat (1-8): ";
+            cin >> seat;
+            m.cancelSeat(row, seat);
+        }
+        else if (choice == 4) {
+            break;
+        }
+        else {
+            cout << "Invalid choice!\n";
+        }
+    }
+
+    return 0;
+}
