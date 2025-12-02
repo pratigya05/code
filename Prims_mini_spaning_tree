@@ -1,0 +1,57 @@
+#include <iostream>
+using namespace std;
+
+#define INF 9999
+
+int main() {
+    int n;
+    cout << "Enter number of vertices: ";
+    cin >> n;
+
+    int cost[20][20];
+
+    cout << "Enter adjacency matrix (enter 0 for no edge):\n";
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> cost[i][j];
+            if (cost[i][j] == 0)
+                cost[i][j] = INF;  // No edge
+        }
+    }
+
+    int selected[20] = {0};
+    selected[0] = 1;  // Start from vertex 0
+
+    int edges = 0;
+    int totalCost = 0;
+
+    cout << "\nEdges in MST:\n";
+
+    while (edges < n - 1) {
+        int minCost = INF;
+        int u = -1, v = -1;
+
+        // Find minimum cost edge from selected set
+        for (int i = 0; i < n; i++) {
+            if (selected[i]) {
+                for (int j = 0; j < n; j++) {
+                    if (!selected[j] && cost[i][j] < minCost) {
+                        minCost = cost[i][j];
+                        u = i;
+                        v = j;
+                    }
+                }
+            }
+        }
+
+        cout << "Edge: " << u << " - " << v << "  Cost: " << minCost << endl;
+        totalCost += minCost;
+
+        selected[v] = 1;
+        edges++;
+    }
+
+    cout << "\nMinimum Cost of MST = " << totalCost << endl;
+
+    return 0;
+}
