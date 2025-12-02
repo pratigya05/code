@@ -1,0 +1,63 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+    int r, c;
+    cout << "Enter rows and columns: ";
+    cin >> r >> c;
+
+    int a[20][20];
+    cout << "Enter matrix elements:\n";
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            cin >> a[i][j];
+        }
+    }
+
+    int compact[100][3];
+    int k = 1;
+
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            if (a[i][j] != 0) {
+                compact[k][0] = i;
+                compact[k][1] = j;
+                compact[k][2] = a[i][j];
+                k++;
+            }
+        }
+    }
+
+    compact[0][0] = r;
+    compact[0][1] = c;
+    compact[0][2] = k - 1;
+
+    cout << "\nCompact form:\n";
+    for (int i = 0; i < k; i++) {
+        cout << compact[i][0] << " " << compact[i][1] << " " << compact[i][2] << endl;
+    }
+
+    int trans[100][3];
+    trans[0][0] = compact[0][1];
+    trans[0][1] = compact[0][0];
+    trans[0][2] = compact[0][2];
+
+    int t = 1;
+    for (int col = 0; col < c; col++) {
+        for (int i = 1; i < k; i++) {
+            if (compact[i][1] == col) {
+                trans[t][0] = compact[i][1];
+                trans[t][1] = compact[i][0];
+                trans[t][2] = compact[i][2];
+                t++;
+            }
+        }
+    }
+
+    cout << "\nSimple transpose:\n";
+    for (int i = 0; i < t; i++) {
+        cout << trans[i][0] << " " << trans[i][1] << " " << trans[i][2] << endl;
+    }
+
+    return 0;
+}
