@@ -1,0 +1,95 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Node structure for each patient
+struct Node {
+    string name;
+    string doctor;
+    Node* next;
+};
+
+// Function to enqueue a new patient
+void enqueue(Node*& front, Node*& rear, string name, string doctor) {
+    Node* newNode = new Node;
+    newNode->name = name;
+    newNode->doctor = doctor;
+    newNode->next = nullptr;
+
+    if(rear == nullptr) {  // Queue is empty
+        front = rear = newNode;
+    } else {
+        rear->next = newNode;
+        rear = newNode;
+    }
+    cout << "Patient " << name << " assigned to Doctor " << doctor << " added to the queue.\n";
+}
+
+// Function to dequeue a patient (served)
+void dequeue(Node*& front, Node*& rear) {
+    if(front == nullptr) {
+        cout << "No patients in the queue.\n";
+        return;
+    }
+    Node* temp = front;
+    cout << "Patient " << temp->name << " seeing Doctor " << temp->doctor << " is being served.\n";
+    front = front->next;
+    if(front == nullptr) rear = nullptr; // Queue became empty
+    delete temp;
+}
+
+// Function to display all waiting patients
+void display(Node* front) {
+    if(front == nullptr) {
+        cout << "No patients in the queue.\n";
+        return;
+    }
+    cout << "Patients in queue:\n";
+    Node* temp = front;
+    while(temp != nullptr) {
+        cout << "Patient: " << temp->name << ", Doctor: " << temp->doctor << endl;
+        temp = temp->next;
+    }
+}
+
+int main() {
+    Node* front = nullptr;
+    Node* rear = nullptr;
+    int choice;
+
+    do {
+        cout << "\n--- Medical Clinic Queue ---\n";
+        cout << "1. Check-in a new patient\n";
+        cout << "2. Serve a patient\n";
+        cout << "3. Display waiting patients\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch(choice) {
+            case 1: {
+                string name, doctor;
+                cin.ignore(); // clear input buffer
+                cout << "Enter patient name: ";
+                getline(cin, name);
+                cout << "Assign to Doctor: ";
+                getline(cin, doctor);
+                enqueue(front, rear, name, doctor);
+                break;
+            }
+            case 2:
+                dequeue(front, rear);
+                break;
+            case 3:
+                display(front);
+                break;
+            case 4:
+                cout << "Exiting...\n";
+                break;
+            default:
+                cout << "Invalid choice! Try again.\n";
+        }
+    } while(choice != 4);
+
+    return 0;
+}
