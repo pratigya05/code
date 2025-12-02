@@ -1,0 +1,43 @@
+#include <iostream>
+#include <stack>
+using namespace std;
+
+// Function to check if opening and closing brackets match
+bool isMatching(char open, char close) {
+    return (open == '(' && close == ')') ||
+           (open == '{' && close == '}') ||
+           (open == '[' && close == ']');
+}
+
+// Function to check if the string has balanced parentheses
+bool isBalanced(string str) {
+    stack<char> s;
+
+    for(char ch : str) {
+        if(ch == '(' || ch == '{' || ch == '[') {
+            // Opening bracket → push onto stack
+            s.push(ch);
+        } else {
+            // Closing bracket → stack must not be empty and top must match
+            if(s.empty() || !isMatching(s.top(), ch))
+                return false;
+            s.pop(); // Pop the matched opening bracket
+        }
+    }
+
+    // If stack is empty → all brackets matched
+    return s.empty();
+}
+
+int main() {
+    string s;
+    cout << "Enter the string of parentheses: ";
+    cin >> s;
+
+    if(isBalanced(s))
+        cout << "The parentheses are balanced.\n";
+    else
+        cout << "The parentheses are NOT balanced.\n";
+
+    return 0;
+}
