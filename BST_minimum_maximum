@@ -1,0 +1,119 @@
+#include <iostream>
+using namespace std;
+
+// ---------------------------
+// Node Structure
+// ---------------------------
+class Node {
+public:
+    int data;
+    Node* left;
+    Node* right;
+
+    Node(int value) {
+        data = value;
+        left = right = nullptr;
+    }
+};
+
+// ---------------------------
+// BST Class
+// ---------------------------
+class BST {
+public:
+    Node* root;
+
+    BST() {
+        root = nullptr;
+    }
+
+    // Insert node in BST
+    Node* insert(Node* root, int value) {
+        if (root == nullptr)
+            return new Node(value);
+
+        if (value < root->data)
+            root->left = insert(root->left, value);
+        else
+            root->right = insert(root->right, value);
+
+        return root;
+    }
+
+    void insertValue(int value) {
+        root = insert(root, value);
+    }
+
+    // ---------------------------
+    // Find Minimum Value
+    // ---------------------------
+    int findMin(Node* root) {
+        if (root == nullptr) {
+            cout << "Tree is empty.\n";
+            return -1;
+        }
+
+        while (root->left != nullptr)
+            root = root->left;
+
+        return root->data;
+    }
+
+    // ---------------------------
+    // Find Maximum Value
+    // ---------------------------
+    int findMax(Node* root) {
+        if (root == nullptr) {
+            cout << "Tree is empty.\n";
+            return -1;
+        }
+
+        while (root->right != nullptr)
+            root = root->right;
+
+        return root->data;
+    }
+};
+
+// ---------------------------
+// MAIN
+// ---------------------------
+int main() {
+    BST tree;
+    int choice, value;
+
+    while (true) {
+        cout << "\n===== BST MENU =====\n";
+        cout << "1. Insert Node\n";
+        cout << "2. Find Minimum\n";
+        cout << "3. Find Maximum\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+
+        case 1:
+            cout << "Enter value to insert: ";
+            cin >> value;
+            tree.insertValue(value);
+            break;
+
+        case 2:
+            cout << "Minimum value in BST = " << tree.findMin(tree.root) << endl;
+            break;
+
+        case 3:
+            cout << "Maximum value in BST = " << tree.findMax(tree.root) << endl;
+            break;
+
+        case 4:
+            return 0;
+
+        default:
+            cout << "Invalid choice! Try again.\n";
+        }
+    }
+
+    return 0;
+}
