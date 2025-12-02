@@ -1,0 +1,148 @@
+#include <iostream>
+using namespace std;
+
+// Node structure for linked list
+struct Node {
+    int data;      // student ID
+    Node* next;
+};
+
+// Function to insert a node at the end
+Node* insert(Node* head, int value) {
+    Node* newNode = new Node;
+    newNode->data = value;
+    newNode->next = nullptr;
+
+    if (head == nullptr)
+        return newNode;
+
+    Node* temp = head;
+    while (temp->next != nullptr)
+        temp = temp->next;
+
+    temp->next = newNode;
+    return head;
+}
+
+// Function to print a linked list
+void printList(Node* head) {
+    Node* temp = head;
+    while (temp != nullptr) {
+        cout << temp->data << " ";
+        temp = temp->next;
+    }
+    cout << endl;
+}
+
+// Check if value exists in linked list
+bool exists(Node* head, int value) {
+    Node* temp = head;
+    while (temp != nullptr) {
+        if (temp->data == value)
+            return true;
+        temp = temp->next;
+    }
+    return false;
+}
+
+// Intersection of two lists (A ∩ B)
+Node* intersection(Node* A, Node* B) {
+    Node* result = nullptr;
+    Node* tempA = A;
+    while (tempA != nullptr) {
+        if (exists(B, tempA->data))
+            result = insert(result, tempA->data);
+        tempA = tempA->next;
+    }
+    return result;
+}
+
+// Symmetric Difference (A Δ B) => either A or B but not both
+Node* symmetricDifference(Node* A, Node* B) {
+    Node* result = nullptr;
+    Node* tempA = A;
+    Node* tempB = B;
+
+    // Elements in A not in B
+    while (tempA != nullptr) {
+        if (!exists(B, tempA->data))
+            result = insert(result, tempA->data);
+        tempA = tempA->next;
+    }
+
+    // Elements in B not in A
+    while (tempB != nullptr) {
+        if (!exists(A, tempB->data))
+            result = insert(result, tempB->data);
+        tempB = tempB->next;
+    }
+
+    return result;
+}
+
+// Count students who like neither Cricket nor Football
+int countNeither(int totalStudents, Node* A, Node* B) {
+    Node* temp = nullptr;
+    int count = 0;
+
+    for (int i = 1; i <= totalStudents; i++) {
+        if (!exists(A, i) && !exists(B, i))
+            count++;
+    }
+    return count;
+}
+
+int main() {
+    Node* setA = nullptr; // Cricket
+    Node* setB = nullptr; // Football
+
+    int nA, nB, totalStudents;
+
+    cout << "Enter total number of students in class: ";
+    cin >> totalStudents;
+
+    cout << "Enter number of students who like Cricket: ";
+    cin >> nA;
+    cout << "Enter student IDs who like Cricket:\n";
+    for (int i = 0; i < nA; i++) {
+        int id;
+        cin >> id;
+        setA = insert(setA, id);
+    }
+
+    cout << "Enter number of students who like Football: ";
+    cin >> nB;
+    cout << "Enter student IDs who like Football:\n";
+    for (int i = 0; i < nB; i++) {
+        int id;
+        cin >> id;
+        setB = insert(setB, id);
+    }
+
+    cout << "\nStudents who like Cricket: ";
+    printList(setA);
+    cout << "Students who like Football: ";
+    printList(setB);
+
+    // a) Both Cricket and Football
+    Node* both = intersection(setA, setB);
+    cout << "\nStudents who like both Cricket and Football: ";
+    if (both != nullptr)
+        printList(both);
+    else
+        cout << "None\n";
+
+    // b) Either Cricket or Football but not both
+    Node* eitherNotBoth = symmetricDifference(setA, setB);
+    cout << "Students who like either Cricket or Football but not both: ";
+    if (eitherNotBoth != nullptr)
+        printList(eitherNotBoth);
+    else
+        cout << "None\n";
+
+    // c) Students who like neither
+    int neither = countNeither(totalStudents, setA, setB);
+    cout << "Number of students who like neither Cricket nor Football: " << neither << endl;
+
+    return 0;
+}
