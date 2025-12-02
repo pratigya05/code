@@ -1,0 +1,138 @@
+#include <iostream>
+using namespace std;
+
+#define MAX 50   // total array size
+
+class MultiStack {
+    int arr[MAX];
+    int top[10];     // stores top index of each stack
+    int n, k;        // n = total size, k = number of stacks
+    int each;        // size of each stack
+
+public:
+    MultiStack(int totalSize, int stacks) {
+        n = totalSize;
+        k = stacks;
+        each = n / k;
+
+        // Initialize tops for each stack
+        for (int i = 0; i < k; i++) {
+            top[i] = i * each - 1;  // starting index before each stack's segment
+        }
+    }
+
+    // PUSH OPERATION
+    void push(int sn, int value) {
+        if (sn < 1 || sn > k) {
+            cout << "Invalid Stack Number!\n";
+            return;
+        }
+
+        int stackIndex = sn - 1;
+        int end = stackIndex * each + (each - 1);
+
+        if (top[stackIndex] == end) {
+            cout << "Stack Overflow in Stack " << sn << endl;
+        } else {
+            top[stackIndex]++;
+            arr[top[stackIndex]] = value;
+            cout << "Pushed " << value << " into Stack " << sn << endl;
+        }
+    }
+
+    // POP OPERATION
+    void pop(int sn) {
+        if (sn < 1 || sn > k) {
+            cout << "Invalid Stack Number!\n";
+            return;
+        }
+
+        int stackIndex = sn - 1;
+        int start = stackIndex * each;
+
+        if (top[stackIndex] < start) {
+            cout << "Stack Underflow in Stack " << sn << endl;
+        } else {
+            cout << "Popped " << arr[top[stackIndex]] << " from Stack " << sn << endl;
+            top[stackIndex]--;
+        }
+    }
+
+    // DISPLAY STACK
+    void display(int sn) {
+        if (sn < 1 || sn > k) {
+            cout << "Invalid Stack Number!\n";
+            return;
+        }
+
+        int stackIndex = sn - 1;
+        int start = stackIndex * each;
+
+        if (top[stackIndex] < start) {
+            cout << "Stack " << sn << " is Empty.\n";
+            return;
+        }
+
+        cout << "Stack " << sn << ": ";
+        for (int i = start; i <= top[stackIndex]; i++) {
+            cout << arr[i] << " ";
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    int stacks, totalSize;
+
+    cout << "Enter total array size: ";
+    cin >> totalSize;
+
+    cout << "Enter number of stacks: ";
+    cin >> stacks;
+
+    MultiStack ms(totalSize, stacks);
+
+    int choice, value, sn;
+
+    do {
+        cout << "\n*** MULTIPLE STACKS MENU ***\n";
+        cout << "1. Push\n";
+        cout << "2. Pop\n";
+        cout << "3. Display a Stack\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "Enter stack number: ";
+            cin >> sn;
+            cout << "Enter value: ";
+            cin >> value;
+            ms.push(sn, value);
+            break;
+
+        case 2:
+            cout << "Enter stack number: ";
+            cin >> sn;
+            ms.pop(sn);
+            break;
+
+        case 3:
+            cout << "Enter stack number: ";
+            cin >> sn;
+            ms.display(sn);
+            break;
+
+        case 4:
+            cout << "Exiting...\n";
+            break;
+
+        default:
+            cout << "Invalid choice!\n";
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}
