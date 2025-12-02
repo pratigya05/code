@@ -1,0 +1,121 @@
+#include <iostream>
+using namespace std;
+
+struct Student {
+    int roll;
+    string name;
+};
+
+class HashTable {
+public:
+    int size;
+    Student *table;
+
+    HashTable(int n) {
+        size = n;
+        table = new Student[size];
+
+        // Initialize all records as empty
+        for (int i = 0; i < size; i++) {
+            table[i].roll = -1;  // -1 means empty slot
+            table[i].name = "";
+        }
+    }
+
+    int hashFunction(int roll) {
+        return roll % size;
+    }
+
+    void insertRecord(int roll, string name) {
+        int index = hashFunction(roll);
+        int start = index;
+
+        while (table[index].roll != -1) {  // collision
+            index = (index + 1) % size;
+
+            if (index == start) {
+                cout << "Hash Table Full! Cannot insert.\n";
+                return;
+            }
+        }
+
+        table[index].roll = roll;
+        table[index].name = name;
+        cout << "Record Inserted.\n";
+    }
+
+    void searchRecord(int roll) {
+        int index = hashFunction(roll);
+        int start = index;
+
+        while (table[index].roll != -1) {
+            if (table[index].roll == roll) {
+                cout << "Record Found:\n";
+                cout << "Roll No: " << table[index].roll << ", Name: " << table[index].name << endl;
+                return;
+            }
+
+            index = (index + 1) % size;
+
+            if (index == start) break;
+        }
+
+        cout << "Record not found.\n";
+    }
+
+    void displayTable() {
+        cout << "\nHash Table:\n";
+        for (int i = 0; i < size; i++) {
+            if (table[i].roll == -1)
+                cout << i << " --> (empty)\n";
+            else
+                cout << i << " --> Roll: " << table[i].roll << ", Name: " << table[i].name << endl;
+        }
+    }
+};
+
+int main() {
+    int n;
+    cout << "Enter size of Hash Table: ";
+    cin >> n;
+
+    HashTable HT(n);
+
+    int choice, roll;
+    string name;
+
+    do {
+        cout << "\n1. Insert Student Record\n2. Search Student Record\n3. Display Hash Table\n4. Exit\nEnter choice: ";
+        cin >> choice;
+
+        switch(choice) {
+        case 1:
+            cout << "Enter Roll Number: ";
+            cin >> roll;
+            cout << "Enter Name: ";
+            cin >> name;
+            HT.insertRecord(roll, name);
+            break;
+
+        case 2:
+            cout << "Enter Roll Number to Search: ";
+            cin >> roll;
+            HT.searchRecord(roll);
+            break;
+
+        case 3:
+            HT.displayTable();
+            break;
+
+        case 4:
+            cout << "Exiting...\n";
+            break;
+
+        default:
+            cout << "Invalid Choice!\n";
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}
