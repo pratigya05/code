@@ -1,0 +1,47 @@
+#include<iostream>
+using namespace std;
+struct students{
+    string year;
+    string div;
+    string name;
+    int roll_no;
+};
+
+int main(){
+     int n;
+    cout<<"enter number of students you want to enter: ";
+    cin>>n;
+    students s[n];
+    for(int i=0;i<n;i++){
+    cout<<"enter year of student: ";
+    cin>>s[i].year;
+    cout<<"enter name of student: ";
+    cin>>s[i].name;
+    cout<<"enter div of student: ";
+    cin>>s[i].div;
+    cout<<"enter roll no of student: ";
+    cin>>s[i].roll_no;
+    }
+    string tg;     // name
+    string targ;   // division
+    string tget;   // year
+    int target;    // roll number
+
+    cout << "\nEnter name, division, year, roll_no of student to find:\n";
+    cin >> tg >> targ >> tget >> target;
+    bool found = false;
+    for(int i=0;i<n;i++){
+        if(target == s[i].roll_no && tg == s[i].name && targ == s[i].div && tget ==s[i].year){
+            cout<<"found the student!! student details are: "<<endl;
+            cout<<"year: "<<s[i].year<<endl;
+            cout<<"name: "<<s[i].name<<endl;
+            cout<<"div: "<<s[i].div<<endl;
+            cout<<"roll_no: "<<s[i].roll_no<<endl;
+            found =true;
+            break;
+        }
+    }
+     if (!found) {
+        cout << "\nStudent NOT found!";
+    }
+}
