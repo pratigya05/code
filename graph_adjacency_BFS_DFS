@@ -1,0 +1,112 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
+
+class Graph {
+    int V;                             // Number of vertices
+    vector<vector<int>> adjMatrix;     // Adjacency Matrix
+
+public:
+    Graph(int vertices) {
+        V = vertices;
+        adjMatrix.resize(V, vector<int>(V, 0));
+    }
+
+    // Add edge (undirected graph)
+    void addEdge(int u, int v) {
+        adjMatrix[u][v] = 1;
+        adjMatrix[v][u] = 1;
+    }
+
+    // Display adjacency matrix
+    void displayMatrix() {
+        cout << "\nAdjacency Matrix:\n";
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < V; j++) {
+                cout << adjMatrix[i][j] << " ";
+            }
+            cout << endl;
+        }
+    }
+
+    // -------------------------
+    // BFS Traversal
+    // -------------------------
+    void BFS(int start) {
+        vector<bool> visited(V, false);
+        queue<int> q;
+
+        visited[start] = true;
+        q.push(start);
+
+        cout << "\nBFS Traversal starting from " << start << ": ";
+
+        while (!q.empty()) {
+            int node = q.front();
+            q.pop();
+            cout << node << " ";
+
+            for (int i = 0; i < V; i++) {
+                if (adjMatrix[node][i] == 1 && !visited[i]) {
+                    visited[i] = true;
+                    q.push(i);
+                }
+            }
+        }
+        cout << endl;
+    }
+
+    // -------------------------
+    // DFS Traversal (Recursive)
+    // -------------------------
+    void DFSUtil(int node, vector<bool> &visited) {
+        visited[node] = true;
+        cout << node << " ";
+
+        for (int i = 0; i < V; i++) {
+            if (adjMatrix[node][i] == 1 && !visited[i])
+                DFSUtil(i, visited);
+        }
+    }
+
+    void DFS(int start) {
+        vector<bool> visited(V, false);
+
+        cout << "\nDFS Traversal starting from " << start << ": ";
+        DFSUtil(start, visited);
+        cout << endl;
+    }
+};
+
+// -------------------------
+// MAIN PROGRAM
+// -------------------------
+int main() {
+    int V, E;
+    cout << "Enter number of vertices: ";
+    cin >> V;
+
+    Graph g(V);
+
+    cout << "Enter number of edges: ";
+    cin >> E;
+
+    cout << "Enter edges (u v):\n";
+    for (int i = 0; i < E; i++) {
+        int u, v;
+        cin >> u >> v;
+        g.addEdge(u, v);
+    }
+
+    g.displayMatrix();
+
+    int start;
+    cout << "\nEnter starting vertex for BFS & DFS: ";
+    cin >> start;
+
+    g.BFS(start);
+    g.DFS(start);
+
+    return 0;
+}
