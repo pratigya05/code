@@ -1,0 +1,94 @@
+#include<iostream>
+using namespace std;
+
+int passNo = 1;
+
+// Function to print array
+void printArray(int marks[], int n) {
+    for(int i=0; i<n; i++)
+        cout << marks[i] << " ";
+    cout << endl;
+}
+
+// Partition function
+int partition(int marks[], int start, int end){
+    int idx = start - 1;
+    int pivot = marks[end];
+
+    for(int j = start; j < end; j++){
+        if(marks[j] <= pivot){
+            idx++;
+            swap(marks[j], marks[idx]);
+        }
+    }
+    idx++;
+    swap(marks[end], marks[idx]);
+    return idx;
+}
+
+// QuickSort with pass-by-pass printing
+void quicksort(int marks[], int start, int end, int n){
+    if(start < end){
+        int pivot_idx = partition(marks, start, end);
+
+        // Print pass
+        cout << "Pass " << passNo++ << ": ";
+        printArray(marks, n);
+
+        quicksort(marks, start, pivot_idx - 1, n);
+        quicksort(marks, pivot_idx + 1, end, n);
+    }
+}
+
+// Divide & Conquer Min-Max
+pair<int,int> findMinMax(int marks[], int start, int end) {
+    // If only one element
+    if(start == end)
+        return {marks[start], marks[start]};
+
+    // If two elements
+    if(end == start + 1) {
+        if(marks[start] < marks[end])
+            return {marks[start], marks[end]};
+        else
+            return {marks[end], marks[start]};
+    }
+
+    // More than two elements
+    int mid = (start + end) / 2;
+
+    pair<int,int> left  = findMinMax(marks, start, mid);
+    pair<int,int> right = findMinMax(marks, mid + 1, end);
+
+    int finalMin = (left.first < right.first) ? left.first : right.first;
+    int finalMax = (left.second > right.second) ? left.second : right.second;
+
+    return {finalMin, finalMax};
+}
+
+int main(){
+    int n;
+    cout << "Enter number of students: ";
+    cin >> n;
+
+    int marks[n];
+    cout << "Enter marks of the students:\n";
+    for(int i = 0; i < n; i++){
+        cin >> marks[i];
+    }
+
+    // QuickSort
+    cout << "\n--- QUICK SORT PASS-BY-PASS ---\n";
+    quicksort(marks, 0, n - 1, n);
+
+    cout << "\nSorted Marks: ";
+    printArray(marks, n);
+
+    // Find min & max
+    pair<int,int> ans = findMinMax(marks, 0, n - 1);
+
+    cout << "\nMinimum mark = " << ans.first << endl;
+    cout << "Maximum mark = " << ans.second << endl;
+
+    return 0;
+}
