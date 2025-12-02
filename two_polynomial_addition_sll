@@ -1,0 +1,108 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int coeff;
+    int pow;
+    Node* next;
+};
+
+Node* createNode(int c, int p) {
+    Node* temp = new Node;
+    temp->coeff = c;
+    temp->pow = p;
+    temp->next = NULL;
+    return temp;
+}
+
+void insertEnd(Node*& head, int c, int p) {
+    Node* newnode = createNode(c, p);
+    if (!head) {
+        head = newnode;
+        return;
+    }
+    Node* temp = head;
+    while (temp->next)
+        temp = temp->next;
+    temp->next = newnode;
+}
+
+void display(Node* head) {
+    if (!head) {
+        cout << "0";
+        return;
+    }
+    Node* temp = head;
+    while (temp) {
+        cout << temp->coeff << "x^" << temp->pow;
+        if (temp->next) cout << " + ";
+        temp = temp->next;
+    }
+    cout << endl;
+}
+
+Node* addPoly(Node* p1, Node* p2) {
+    Node* result = NULL;
+
+    while (p1 && p2) {
+        if (p1->pow == p2->pow) {
+            insertEnd(result, p1->coeff + p2->coeff, p1->pow);
+            p1 = p1->next;
+            p2 = p2->next;
+        }
+        else if (p1->pow > p2->pow) {
+            insertEnd(result, p1->coeff, p1->pow);
+            p1 = p1->next;
+        }
+        else {
+            insertEnd(result, p2->coeff, p2->pow);
+            p2 = p2->next;
+        }
+    }
+
+    while (p1) {
+        insertEnd(result, p1->coeff, p1->pow);
+        p1 = p1->next;
+    }
+    while (p2) {
+        insertEnd(result, p2->coeff, p2->pow);
+        p2 = p2->next;
+    }
+
+    return result;
+}
+
+int main() {
+    Node *poly1 = NULL, *poly2 = NULL;
+
+    int n, coeff, pow;
+
+    cout << "\nEnter number of terms in Polynomial 1: ";
+    cin >> n;
+    cout << "Enter coefficient and power:\n";
+    for (int i = 0; i < n; i++) {
+        cin >> coeff >> pow;
+        insertEnd(poly1, coeff, pow);
+    }
+
+    cout << "\nEnter number of terms in Polynomial 2: ";
+    cin >> n;
+    cout << "Enter coefficient and power:\n";
+    for (int i = 0; i < n; i++) {
+        cin >> coeff >> pow;
+        insertEnd(poly2, coeff, pow);
+    }
+
+    cout << "\nPolynomial 1: ";
+    display(poly1);
+
+    cout << "Polynomial 2: ";
+    display(poly2);
+
+    Node* sum = addPoly(poly1, poly2);
+
+    cout << "\nSum of Polynomials: ";
+    display(sum);
+
+    return 0;
+}
