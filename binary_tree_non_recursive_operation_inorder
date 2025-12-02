@@ -1,0 +1,69 @@
+#include <iostream>
+#include <stack>
+using namespace std;
+
+struct Node {
+    int data;
+    Node *left, *right;
+
+    Node(int val) {
+        data = val;
+        left = right = NULL;
+    }
+};
+
+// Create Node
+Node* create() {
+    int x;
+    cout << "Enter data (-1 for no node): ";
+    cin >> x;
+
+    if (x == -1)
+        return NULL;
+
+    Node* newnode = new Node(x);
+
+    cout << "Enter left child of " << x << ":\n";
+    newnode->left = create();
+
+    cout << "Enter right child of " << x << ":\n";
+    newnode->right = create();
+
+    return newnode;
+}
+
+// Non-recursive Inorder Traversal
+void inorderNonRecursive(Node* root) {
+    stack<Node*> st;
+    Node* curr = root;
+
+    cout << "\nInorder Traversal: ";
+
+    while (curr != NULL || !st.empty()) {
+        // Reach leftmost node
+        while (curr != NULL) {
+            st.push(curr);
+            curr = curr->left;
+        }
+
+        // Visit node
+        curr = st.top();
+        st.pop();
+        cout << curr->data << " ";
+
+        // Go to right subtree
+        curr = curr->right;
+    }
+}
+
+int main() {
+    Node* root = NULL;
+
+    cout << "Create Binary Tree\n";
+    root = create();
+
+    cout << "\nPerforming Non-Recursive Inorder Traversal...\n";
+    inorderNonRecursive(root);
+
+    return 0;
+}
