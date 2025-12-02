@@ -1,0 +1,254 @@
+#include <iostream>
+using namespace std;
+
+// Convert minutes to readable HH:MM format
+void displayTime(int mins) {
+    int h = mins / 60;
+    int m = mins % 60;
+    cout << (h < 10 ? "0" : "") << h << ":" 
+         << (m < 10 ? "0" : "") << m;
+}
+
+class Node {
+public:
+    int start;
+    int end;
+    Node* next;
+
+    Node(int s, int e) {
+        start = s;
+        end = e;
+        next = NULL;
+    }
+};
+
+class AppointmentList {
+    Node* head;
+
+    int dayStart = 540;   // 9:00 AM
+    int dayEnd   = 1020;  // 5:00 PM
+    int minDur   = 30;    // minimum duration
+    int maxDur   = 90;    // maximum duration
+
+public:
+    AppointmentList() {
+        head = NULL;
+    }
+
+    // -------------------------------------------------------
+    // DISPLAY ALL CURRENT APPOINTMENTS
+    // -------------------------------------------------------
+    void displayAppointments() {
+        if (!head) {
+            cout << "\nNo appointments booked.\n";
+            return;
+        }
+
+        cout << "\n--- Current Booked Appointments ---\n";
+        Node* temp = head;
+        while (temp) {
+            displayTime(temp->start);
+            cout << " - ";
+            displayTime(temp->end);
+            cout << endl;
+            temp = temp->next;
+        }
+    }
+
+    // -------------------------------------------------------
+    // DISPLAY ALL AVAILABLE FREE SLOTS
+    // -------------------------------------------------------
+    void displayFreeSlots() {
+        cout << "\n--- Available Time Slots ---\n";
+
+        if (!head) {
+            displayTime(dayStart);
+            cout << " - ";
+            displayTime(dayEnd);
+            cout << endl;
+            return;
+        }
+
+        Node* temp = head;
+
+        // Slot before the first appointment
+        if (dayStart < temp->start) {
+            displayTime(dayStart);
+            cout << " - ";
+            displayTime(temp->start);
+            cout << endl;
+        }
+
+        // Slots between appointments
+        while (temp->next) {
+            if (temp->end < temp->next->start) {
+                displayTime(temp->end);
+                cout << " - ";
+                displayTime(temp->next->start);
+                cout << endl;
+            }
+            temp = temp->next;
+        }
+
+        // Slot after the last appointment
+        if (temp->end < dayEnd) {
+            displayTime(temp->end);
+            cout << " - ";
+            displayTime(dayEnd);
+            cout << endl;
+        }
+    }
+
+
+    // -------------------------------------------------------
+    // BOOK APPOINTMENT
+    // -------------------------------------------------------
+    void bookAppointment(int s, int e) {
+
+        if (e <= s) {
+            cout << "Invalid time range!\n";
+            return;
+        }
+        int duration = e - s;
+
+        if (duration < minDur || duration > maxDur) {
+            cout << "Appointment must be between " << minDur
+                 << " and " << maxDur << " minutes.\n";
+            return;
+        }
+
+        if (s < dayStart || e > dayEnd) {
+            cout << "Time outside working hours!\n";
+            return;
+        }
+
+        // -------------- Check overlap --------------
+        Node* temp = head;
+        while (temp) {
+            if (!(e <= temp->start || s >= temp->end)) {
+                cout << "Time slot overlaps with an existing appointment!\n";
+                return;
+            }
+            temp = temp->next;
+        }
+
+        // ------------ Insert Appointment ------------
+        Node* newNode = new Node(s, e);
+
+        if (!head || s < head->start) {
+            newNode->next = head;
+            head = newNode;
+        } else {
+            Node* curr = head;
+            while (curr->next && curr->next->start < s)
+                curr = curr->next;
+
+            newNode->next = curr->next;
+            curr->next = newNode;
+        }
+
+        cout << "Appointment booked successfully!\n";
+    }
+
+
+    // -------------------------------------------------------
+    // CANCEL APPOINTMENT
+    // -------------------------------------------------------
+    void cancelAppointment(int s, int e) {
+        if (!head) {
+            cout << "No appointments to cancel.\n";
+            return;
+        }
+
+        Node* temp = head;
+
+        // If first appointment
+        if (temp->start == s && temp->end == e) {
+            head = head->next;
+            delete temp;
+            cout << "Appointment cancelled.\n";
+            return;
+        }
+
+        // Search in list
+        while (temp->next) {
+            if (temp->next->start == s && temp->next->end == e) {
+                Node* del = temp->next;
+                temp->next = del->next;
+                delete del;
+                cout << "Appointment cancelled.\n";
+                return;
+            }
+            temp = temp->next;
+        }
+
+        cout << "Appointment not found.\n";
+    }
+
+
+    // -------------------------------------------------------
+    // SORT THE LIST BY START TIME
+    // -------------------------------------------------------
+    void sortList() {
+        if (!head || !head->next) return;
+
+        Node *i, *j;
+
+        for (i = head; i->next; i = i->next) {
+            for (j = i->next; j; j = j->next) {
+                if (j->start < i->start) {
+                    swap(j->start, i->start);
+                    swap(j->end, i->end);
+                }
+            }
+        }
+
+        cout << "Appointment list sorted.\n";
+    }
+};
+
+
+// *****************************************************************
+// MAIN PROGRAM
+// *****************************************************************
+
+int main() {
+    AppointmentList list;
+    int choice;
+
+    while (true) {
+        cout << "\n========= APPOINTMENT SYSTEM MENU =========\n";
+        cout << "1. Display Booked Appointments\n";
+        cout << "2. Display Available Time Slots\n";
+        cout << "3. Book Appointment\n";
+        cout << "4. Cancel Appointment\n";
+        cout << "5. Sort Appointment List\n";
+        cout << "6. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        if (choice == 1) list.displayAppointments();
+        else if (choice == 2) list.displayFreeSlots();
+        else if (choice == 3) {
+            int s, e;
+            cout << "Enter start time in minutes: ";
+            cin >> s;
+            cout << "Enter end time in minutes: ";
+            cin >> e;
+            list.bookAppointment(s, e);
+        }
+        else if (choice == 4) {
+            int s, e;
+            cout << "Enter start time: ";
+            cin >> s;
+            cout << "Enter end time: ";
+            cin >> e;
+            list.cancelAppointment(s, e);
+        }
+        else if (choice == 5) list.sortList();
+        else if (choice == 6) break;
+        else cout << "Invalid choice!\n";
+    }
+
+    return 0;
+}
