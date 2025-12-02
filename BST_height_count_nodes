@@ -1,0 +1,112 @@
+#include <iostream>
+using namespace std;
+
+// ---------------------------
+// Node Structure
+// ---------------------------
+class Node {
+public:
+    int data;
+    Node* left;
+    Node* right;
+
+    Node(int value) {
+        data = value;
+        left = right = nullptr;
+    }
+};
+
+// ---------------------------
+// BST Class
+// ---------------------------
+class BST {
+public:
+    Node* root;
+
+    BST() {
+        root = nullptr;
+    }
+
+    // Insert node
+    Node* insert(Node* root, int value) {
+        if (root == nullptr)
+            return new Node(value);
+
+        if (value < root->data)
+            root->left = insert(root->left, value);
+        else
+            root->right = insert(root->right, value);
+
+        return root;
+    }
+
+    // Wrapper function
+    void insertValue(int value) {
+        root = insert(root, value);
+    }
+
+    // ---------------------------
+    // Count Total Nodes (Recursive)
+    // ---------------------------
+    int countNodes(Node* root) {
+        if (root == nullptr)
+            return 0;
+        return 1 + countNodes(root->left) + countNodes(root->right);
+    }
+
+    // ---------------------------
+    // Compute Height of BST
+    // ---------------------------
+    int height(Node* root) {
+        if (root == nullptr)
+            return -1;   // Convention: Empty tree height = -1
+
+        int leftHeight = height(root->left);
+        int rightHeight = height(root->right);
+
+        return 1 + max(leftHeight, rightHeight);
+    }
+};
+
+// ---------------------------
+// MAIN
+// ---------------------------
+int main() {
+    BST tree;
+    int choice, value;
+
+    while (true) {
+
+        cout << "\n===== BST MENU =====\n";
+        cout << "1. Insert Node\n";
+        cout << "2. Count Total Nodes\n";
+        cout << "3. Compute Height of BST\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+
+        case 1:
+            cout << "Enter value to insert: ";
+            cin >> value;
+            tree.insertValue(value);
+            break;
+
+        case 2:
+            cout << "Total Nodes = " << tree.countNodes(tree.root) << endl;
+            break;
+
+        case 3:
+            cout << "Height of BST = " << tree.height(tree.root) << endl;
+            break;
+
+        case 4:
+            return 0;
+
+        default:
+            cout << "Invalid choice. Try again.\n";
+        }
+    }
+    return 0;
+}
