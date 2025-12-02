@@ -1,0 +1,115 @@
+#include <iostream>
+using namespace std;
+
+class CircularQueue {
+public:
+    int front, rear, size;
+    int *queue;
+
+    CircularQueue(int n) {
+        size = n;
+        queue = new int[size];
+        front = rear = -1;
+    }
+
+    bool isFull() {
+        return (front == (rear + 1) % size);
+    }
+
+    bool isEmpty() {
+        return (front == -1);
+    }
+
+    // Add order
+    void enqueue(int orderID) {
+        if (isFull()) {
+            cout << "Pizza Parlour Full! No more orders can be accepted.\n";
+            return;
+        }
+
+        if (isEmpty()) {
+            front = rear = 0;
+        } else {
+            rear = (rear + 1) % size;
+        }
+
+        queue[rear] = orderID;
+        cout << "Order " << orderID << " placed successfully.\n";
+    }
+
+    // Serve order
+    void dequeue() {
+        if (isEmpty()) {
+            cout << "No orders to serve.\n";
+            return;
+        }
+
+        cout << "Order " << queue[front] << " served.\n";
+
+        if (front == rear) {
+            // Only one element
+            front = rear = -1;
+        } else {
+            front = (front + 1) % size;
+        }
+    }
+
+    // Display waiting orders
+    void display() {
+        if (isEmpty()) {
+            cout << "No pending orders.\n";
+            return;
+        }
+
+        cout << "Orders in queue: ";
+        int i = front;
+        while (true) {
+            cout << queue[i] << " ";
+            if (i == rear)
+                break;
+            i = (i + 1) % size;
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    int n, choice, orderID;
+    cout << "Enter maximum number of orders that can be accepted: ";
+    cin >> n;
+
+    CircularQueue cq(n);
+
+    do {
+        cout << "\n--- Pizza Parlour Menu ---\n";
+        cout << "1. Place Order\n2. Serve Order\n3. Display Pending Orders\n4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter Order ID: ";
+                cin >> orderID;
+                cq.enqueue(orderID);
+                break;
+
+            case 2:
+                cq.dequeue();
+                break;
+
+            case 3:
+                cq.display();
+                break;
+
+            case 4:
+                cout << "Exiting...\n";
+                break;
+
+            default:
+                cout << "Invalid choice! Try again.\n";
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}
