@@ -1,0 +1,80 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+struct Edge {
+    int u, v, w;   // from, to , weight
+};
+
+// Find parent using path compression
+int findParent(int parent[], int x) {
+    if (parent[x] == x)
+        return x;
+    return parent[x] = findParent(parent, parent[x]);
+}
+
+// Union of two sets
+void unionSet(int parent[], int rank[], int x, int y) {
+    int px = findParent(parent, x);
+    int py = findParent(parent, y);
+
+    if (rank[px] < rank[py])
+        parent[px] = py;
+    else if (rank[px] > rank[py])
+        parent[py] = px;
+    else {
+        parent[py] = px;
+        rank[px]++;
+    }
+}
+
+int main() {
+    int n, e;
+    cout << "Enter number of vertices: ";
+    cin >> n;
+
+    cout << "Enter number of edges: ";
+    cin >> e;
+
+    Edge edges[50];
+
+    cout << "Enter edges (u v weight):\n";
+    for (int i = 0; i < e; i++) {
+        cin >> edges[i].u >> edges[i].v >> edges[i].w;
+    }
+
+    // Sort edges by weight (ascending)
+    sort(edges, edges + e, [](Edge a, Edge b) {
+        return a.w < b.w;
+    });
+
+    // Create parent & rank array
+    int parent[20], rank[20] = {0};
+    for (int i = 0; i < n; i++)
+        parent[i] = i;
+
+    int mstCost = 0;
+    cout << "\nEdges in Minimum Spanning Tree:\n";
+
+    int count = 0;  // number of edges in MST
+
+    for (int i = 0; i < e && count < n - 1; i++) {
+
+        int pu = findParent(parent, edges[i].u);
+        int pv = findParent(parent, edges[i].v);
+
+        // If they belong to different sets → no cycle
+        if (pu != pv) {
+            cout << edges[i].u << " -- " << edges[i].v
+                 << "  Cost: " << edges[i].w << endl;
+
+            mstCost += edges[i].w;
+            unionSet(parent, rank, pu, pv);
+            count++;
+        }
+    }
+
+    cout << "\nMinimum Cost of MST = " << mstCost << endl;
+
+    return 0;
+}
